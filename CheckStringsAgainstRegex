@@ -22,7 +22,7 @@ Sub CheckStringsAgainstRegex()
     Set regex = CreateObject("VBScript.RegExp")
 
     ' 最後の行を取得します。これはA列にデータが入っていると仮定しています。
-    ' 最後の行の番号を知ることで、全てのデータをループで処理することができます。
+    ' 最後の行の番号を得ることで、全てのデータをループで処理することができます。
     lastRow = wsStrings.Cells(wsStrings.Rows.Count, "A").End(xlUp).Row
 
     ' 各行のデータを順番に処理します
