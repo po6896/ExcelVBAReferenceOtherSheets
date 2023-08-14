@@ -1,0 +1,51 @@
+Sub CheckStringsAgainstRegex()
+
+    ' 変数を定義します
+    Dim wb As Workbook ' ワークブックを操作するための変数
+    Dim wsStrings As Worksheet ' 文字列が書かれているシートを操作するための変数
+    Dim wsRegex As Worksheet ' 正規表現が書かれているシートを操作するための変数
+    Dim targetString As String ' 検査対象となる文字列を保持するための変数
+    Dim regexPattern As String ' 正規表現のパターンを保持するための変数
+    Dim lastRow As Long ' 最後の行の番号を知るための変数
+    Dim i As Long ' ループ用のカウンタ変数
+    Dim regex As Object ' 正規表現を操作するためのオブジェクト
+    Dim matches As Object ' 正規表現の一致結果を保持するためのオブジェクト
+
+    ' 他のブックを開きます。ファイルのパスを正しく設定してください。
+    Set wb = Workbooks.Open("C:\path\to\your\workbook.xlsx")
+
+    ' シートをセットアップ。シート名を正しく設定してください。
+    Set wsStrings = wb.Worksheets("StringSheetName")
+    Set wsRegex = wb.Worksheets("RegexSheetName")
+
+    ' 正規表現オブジェクトの作成
+    Set regex = CreateObject("VBScript.RegExp")
+
+    ' 最後の行を取得します。これはA列にデータが入っていると仮定しています。
+    ' 最後の行の番号を知ることで、全てのデータをループで処理することができます。
+    lastRow = wsStrings.Cells(wsStrings.Rows.Count, "A").End(xlUp).Row
+
+    ' 各行のデータを順番に処理します
+    For i = 1 To lastRow
+        ' 1列目から文字列を取得すると仮定
+        targetString = wsStrings.Cells(i, 1).Value
+        ' 1列目から正規表現を取得すると仮定
+        regexPattern = wsRegex.Cells(i, 1).Value 
+        
+        ' 正規表現のセットアップ
+        regex.Pattern = regexPattern
+        regex.Global = False ' この設定により、最初に一致したもののみを取得します
+
+        ' 文字列が正規表現に一致するかチェックします
+        Set matches = regex.Execute(targetString)
+
+        ' 一致しない場合、結果を出力します。例としてB列に出力。
+        If matches.Count = 0 Then
+            wsStrings.Cells(i, 2).Value = targetString
+        End If
+    Next i
+
+    ' 使用が終わったブックを保存せずに閉じます。必要に応じて保存オプションを変更してください。
+    wb.Close SaveChanges:=False
+
+End Sub
